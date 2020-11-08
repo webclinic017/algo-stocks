@@ -1,5 +1,5 @@
 [submodule "backtesting"]
-	path = backtesting
+	path = backtesting.py
 	url = https://github.com/kernc/backtesting.py.git
 [submodule "method"]
 	path = method
