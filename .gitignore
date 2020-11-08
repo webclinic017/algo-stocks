@@ -1,2 +1,5 @@
 .idea
 .ipynb_checkpoints
+/backtest/
+/method/
+/vn-stock-data/
