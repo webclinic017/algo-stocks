@@ -1,7 +1,7 @@
 import os
 import sys
 
-BACKTESTING_MODULE_PATH = os.path.abspath('../../backtest/backtesting/')
+BACKTESTING_MODULE_PATH = os.path.abspath('../../backtest/')
 sys.path.insert(1, BACKTESTING_MODULE_PATH)
 from backtest.backtesting import Backtest, Strategy
 
@@ -30,7 +30,7 @@ class StockBreakOut(Strategy):
 vn30_ticker = Ticker.getListBlueChips2020()
 DATA_PATH = os.path.abspath('../../vn-stock-data/VNX/')
 for ticker in vn30_ticker:
-    ticker_data = get_pricing_by_path(DATA_PATH+ticker+'.csv')
+    ticker_data = get_pricing_by_path(DATA_PATH + '/' + ticker+'.csv')
     bt = Backtest(ticker_data, StockBreakOut, commission=.005, exclusive_orders=False)
     stats = bt.run()
     # bt.plot()
