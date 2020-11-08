@@ -1,0 +1,6 @@
+[submodule "method"]
+	path = method
+	url = git@github.com:zuongthaotn/quant-trading-by-py.git
+[submodule "backtesting"]
+	path = backtesting
+	url = https://github.com/kernc/backtesting.py.git
