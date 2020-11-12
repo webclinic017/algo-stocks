@@ -3,3 +3,5 @@
 /backtest/
 /method/
 /vn-stock-data/
+*.csv
+*.html

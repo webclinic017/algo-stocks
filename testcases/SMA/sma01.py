@@ -1,6 +1,14 @@
+import warnings
+warnings.filterwarnings('ignore')
+
+import os
+import sys
+
+BACKTESTING_MODULE_PATH = os.path.abspath('../../backtest')
+sys.path.insert(1, BACKTESTING_MODULE_PATH)
+
 from backtesting import Backtest, Strategy
 from backtesting.lib import crossover
-
 from backtesting.test import SMA,GOOG
 
 
@@ -20,5 +28,5 @@ class SmaCross(Strategy):
 bt = Backtest(GOOG, SmaCross, commission=.002,
               exclusive_orders=True)
 stats = bt.run()
-# bt.plot()
+bt.plot()
 print(stats)

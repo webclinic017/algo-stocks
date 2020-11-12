@@ -36,12 +36,13 @@ class FollowTheTrend(Strategy):
                 self.position.close()
                 self.buy_price = 0
 
-ticker_id = 'DAH'
+ticker_id = 'PNJ'
 DATA_PATH = os.path.abspath('../../vn-stock-data/VNX/')
-ticker = _af.get_pricing_by_path(DATA_PATH + '/' + ticker_id+'.csv', '2018-01-01', '2020-10-05')
+ticker = _af.get_pricing_by_path(DATA_PATH + '/' + ticker_id+'.csv', '2010-01-01', '2020-10-05')
 bt = Backtest(ticker, FollowTheTrend, commission=.005, exclusive_orders=False)
 stats = bt.run()
-# print(stats)
-print(stats['_trades'])
-new_file = path+"/result_"+ticker_id+".csv"
-stats['_trades'].to_csv(new_file, index=False)
+bt.plot()
+print(stats)
+# print(stats['_trades'])
+# new_file = path+"/result_"+ticker_id+".csv"
+# stats['_trades'].to_csv(new_file, index=False)
