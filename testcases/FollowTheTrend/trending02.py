@@ -1,10 +1,19 @@
-import os
-from backtesting import Backtest, Strategy
+import warnings
+warnings.filterwarnings('ignore')
 
-from backtesting.magnus import get_pricing
+import os
+import sys
+import pandas as pd
+
+BACKTESTING_MODULE_PATH = os.path.abspath('../../backtest')
+sys.path.insert(1, BACKTESTING_MODULE_PATH)
+from backtesting.backtesting import Backtest, Strategy
+
+METHOD_MODULE_PATH = os.path.abspath('../..')
+sys.path.insert(1, METHOD_MODULE_PATH)
 import method.Ticker as Ticker
-import method.TakeProfit as TakeProfit
-import method.CutLoss as CutLoss
+import method.SaleRules as _sr
+import method.algofuncs as _af
 
 path = os.getcwd()
 STOPLOSS = 0.08
@@ -26,18 +35,14 @@ class FollowTheTrend(Strategy):
                 self.buy_price = last_price
                 self.buy()
             if self.buy_price != 0:
-                # print(self.buy_price * (1 - STOPLOSS))
-                # print(last_price)
-                # print(self.trailing_price * (1 - STOPLOSS))
-                # print('------------------------')
-                if TakeProfit.takeProfit(15, last_price, self.buy_price) or last_price < self.buy_price * (1 - STOPLOSS) or last_price < self.trailing_price * (1 - STOPLOSS):
-                    print(self.data.Date[-1])
+                if _sr.takeProfitByPercent(15, last_price, self.buy_price) or last_price < self.buy_price * (1 - STOPLOSS) or last_price < self.trailing_price * (1 - STOPLOSS):
                     self.position.close()
                     self.buy_price = 0
                     self.trailing_price = 0
 
-ticker_id = 'PNJ'
-ticker = get_pricing(ticker_id+'.csv', '2018-01-01', '2020-10-05')
+ticker_id = 'HBC'
+DATA_PATH = os.path.abspath('../../vn-stock-data/VNX/')
+ticker = _af.get_pricing_by_path(DATA_PATH + '/' + ticker_id+'.csv', '2010-01-01', '2020-10-05')
 bt = Backtest(ticker, FollowTheTrend, commission=.005, exclusive_orders=False)
 stats = bt.run()
 # bt.plot()
