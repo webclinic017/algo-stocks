@@ -11,7 +11,16 @@ import method.algofuncs as _af
 
 
 DATA_PATH = os.path.abspath('../vn-stock-data/VNX/')
-ticker_data = _af.get_pricing_by_path(DATA_PATH + '/' + 'KOS.csv', start_date='2018-11-01')
+ticker_data = _af.get_pricing_by_path(DATA_PATH + '/' + 'KOS.csv', start_date='2020-10-01')
+
+mmi_week = _af.MMI(ticker_data["Close"], 5)
+plt.figure()
+plt.subplot(211)
+plt.plot(ticker_data["Close"], label='Close Price', color='black')
+plt.subplot(212)
+plt.plot(mmi_week, label='MMI Week')
+plt.legend()
+plt.show()
 
 # plt.figure()
 # plt.subplot(211)
@@ -57,8 +66,7 @@ ticker_data = _af.get_pricing_by_path(DATA_PATH + '/' + 'KOS.csv', start_date='2
 # for n in a:
 #   print(n)
 
-# DATA_PATH = os.path.abspath('../vn-stock-data/VNX/')
-# ticker_data = _af.get_pricing_by_path(DATA_PATH + '/' + 'PNJ.csv')
+
 # print(ticker_data)
 # print(type(ticker_data) is pd.core.frame.DataFrame)
 # print(ticker_data.tail())
