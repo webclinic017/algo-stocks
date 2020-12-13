@@ -7,12 +7,12 @@ import sys
 import time
 import numpy as np
 
+ZORRO_STRATEGY_PATH = os.path.abspath('E:\\Zorro\\Strategy\\Magnus\\CounterTrend\\V3.c')
 METHOD_MODULE_PATH = os.path.abspath('../..')
 sys.path.insert(1, METHOD_MODULE_PATH)
 import method.algofuncs as _af
 
 path = os.getcwd()
-
 
 def getPriceCounterTrendV3a(ticker_data):
     """
@@ -65,21 +65,36 @@ vnx_file = os.path.abspath('../../vn-stock-data/VNX.csv')
 ticker_follow_trending = []
 hose_ticker = _af.getHOSETickers(vnx_file)
 result = []
+assets = ''
+thresh_hold = ''
 for ticker_id in hose_ticker:
     ticker_data = _af.get_pricing_by_path(DATA_PATH + '/' + ticker_id + '.csv', '2020-01-01')
     estimated_price = getPriceCounterTrendV3a(ticker_data)
     if estimated_price > 0:
         if not len(result):
             result = [[ticker_id, str(estimated_price)]]
+            assets += '"' + str(ticker_id) + '"'
         else:
             result.append([ticker_id, str(estimated_price)])
-thresh_hold_ticker = np.array(result)
-for a in thresh_hold_ticker:
-    print(a[0])
-    print(a[1])
-exit()
-while(True):
-    for a in thresh_hold_ticker:
-        print(a[0])
-        print(a[1])
-    time.sleep(300)
+            assets += ", " + '"' + str(ticker_id) + '"'
+        thresh_hold += '\n\t case "' + str(ticker_id) + '": t = ' + str(estimated_price) + ';\n\t\tbreak;'
+
+if len(result):
+    template = open("zorro_template.c", "r")
+    template_content = template.read()
+    template.close()
+    zorro_strategy = open(ZORRO_STRATEGY_PATH,"w")
+    zorro_strategy.write('#include "Strategy/Magnus/fixZorro.h" \n')
+    zorro_strategy.write('#include "Strategy/Magnus/Ticker.h" \n')
+    zorro_strategy.write('#define RPM         '+assets + '\n')
+    zorro_strategy.write('#define ASSETS      RPM \n')
+    zorro_strategy.write('#define N           ' + str(len(result)) + '\n')
+    zorro_strategy.write(template_content)
+    zorro_strategy.write("\nvar getThreshHold(string ticker){\n");
+    zorro_strategy.write("\t float t;\n");
+    zorro_strategy.write("\t switch(ticker){");
+    zorro_strategy.write(thresh_hold);
+    zorro_strategy.write("\n\t}\n");
+    zorro_strategy.write("\t return t;\n");
+    zorro_strategy.write("\t}\n");
+    zorro_strategy.close()
