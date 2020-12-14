@@ -4,10 +4,10 @@ warnings.filterwarnings('ignore')
 
 import os
 import sys
-import time
 import numpy as np
 
 ZORRO_STRATEGY_PATH = os.path.abspath('E:\\Zorro\\Strategy\\Magnus\\CounterTrend\\V3.c')
+# ZORRO_STRATEGY_PATH = os.path.abspath('../V3.c')
 METHOD_MODULE_PATH = os.path.abspath('../..')
 sys.path.insert(1, METHOD_MODULE_PATH)
 import method.algofuncs as _af
@@ -21,8 +21,12 @@ def getPriceCounterTrendV3a(ticker_data):
             2. Bien dong gia 1 thang(22 ngay) gan day <20%
             3. Bien dong gia tuan(5 ngay) gan day < 15%
             4. Dang giam gia
-                Price Low today is the min or smaller min5 * 3%
-                Price Low today is the smaller max5 * 0.93
+                Price Low today is the smaller max5 * 0.95
+            5. Giao dich TB 5 ngay gan day > 500k cp/day
+            6. Last Rule is 1 of:
+                Price Low today is the min5 or smaller min5 * 3%
+                Or Price Low today is the min22 or smaller min22 * 3%
+                Or Price Low today is the min66 or smaller min66 * 3%
     :param ticker_data: pandas.core.DataFrame
     """
     last66 = ticker_data.tail(66)
@@ -57,6 +61,7 @@ def getPriceCounterTrendV3a(ticker_data):
     if ticker_data5.Low.values[-1] > ticker_data5.High.values[-1] * 0.95:
         return 0
     expected_prices = np.array([minLow5, minLow5 * 1.03, minLow22, minLow22 * 1.03, minLow66, minLow66 * 1.03])
+    print(expected_prices)
     return expected_prices.max()
 
 
@@ -77,7 +82,7 @@ for ticker_id in hose_ticker:
         else:
             result.append([ticker_id, str(estimated_price)])
             assets += ", " + '"' + str(ticker_id) + '"'
-        thresh_hold += '\n\t case "' + str(ticker_id) + '": t = ' + str(estimated_price) + ';\n\t\tbreak;'
+        thresh_hold += '\n\t\tcase "' + str(ticker_id) + '": t = ' + str(estimated_price) + ';\n\t\t\tbreak;'
 
 if len(result):
     template = open("zorro_template.c", "r")
@@ -90,11 +95,11 @@ if len(result):
     zorro_strategy.write('#define ASSETS      RPM \n')
     zorro_strategy.write('#define N           ' + str(len(result)) + '\n')
     zorro_strategy.write(template_content)
-    zorro_strategy.write("\nvar getThreshHold(string ticker){\n");
-    zorro_strategy.write("\t float t;\n");
-    zorro_strategy.write("\t switch(ticker){");
-    zorro_strategy.write(thresh_hold);
-    zorro_strategy.write("\n\t}\n");
-    zorro_strategy.write("\t return t;\n");
-    zorro_strategy.write("\t}\n");
+    zorro_strategy.write("\nvar getThreshHold(string ticker){\n")
+    zorro_strategy.write("\tfloat t;\n")
+    zorro_strategy.write("\tswitch(ticker){")
+    zorro_strategy.write(thresh_hold)
+    zorro_strategy.write("\n\t}\n")
+    zorro_strategy.write("\treturn t;\n")
+    zorro_strategy.write("}\n")
     zorro_strategy.close()
