@@ -13,6 +13,6 @@ function run()
         if(price() < t){
             enterLong();
         }
-        printf("\n ticker %s - thresh hold %.2f", Asset, getThreshHold(ticker));
+        printf("\n ticker %s - current price %.2f - thresh hold %.2f", Asset, price(), getThreshHold(ticker));
 	}
 }
