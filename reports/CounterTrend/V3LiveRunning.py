@@ -85,7 +85,7 @@ if len(result):
     template.close()
     zorro_strategy = open(ZORRO_STRATEGY_PATH,"w")
     zorro_strategy.write('#include "Strategy/Magnus/fixZorro.h" \n')
-    zorro_strategy.write('#include "Strategy/Magnus/Ticker.h" \n')
+    # zorro_strategy.write('#include "Strategy/Magnus/Ticker.h" \n')
     zorro_strategy.write('#define RPM         '+assets + '\n')
     zorro_strategy.write('#define ASSETS      RPM \n')
     zorro_strategy.write('#define N           ' + str(len(result)) + '\n')
