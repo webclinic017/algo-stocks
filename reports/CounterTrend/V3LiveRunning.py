@@ -24,9 +24,9 @@ def getPriceCounterTrendV3a(ticker_data):
                 Price Low today is the smaller max5 * 0.95
             5. Giao dich TB 5 ngay gan day > 500k cp/day
             6. Last Rule is 1 of:
-                Price Low today is the min5 or smaller min5 * 3%
-                Or Price Low today is the min22 or smaller min22 * 3%
-                Or Price Low today is the min66 or smaller min66 * 3%
+                Price Low today is the min5 or smaller min5 * 2%
+                Or Price Low today is the min22 or smaller min22 * 2%
+                Or Price Low today is the min66 or smaller min66 * 2%
     :param ticker_data: pandas.core.DataFrame
     """
     last66 = ticker_data.tail(66)
@@ -60,8 +60,7 @@ def getPriceCounterTrendV3a(ticker_data):
         return 0
     if ticker_data5.Low.values[-1] > ticker_data5.High.values[-1] * 0.95:
         return 0
-    expected_prices = np.array([minLow5, minLow5 * 1.03, minLow22, minLow22 * 1.03, minLow66, minLow66 * 1.03])
-    print(expected_prices)
+    expected_prices = np.array([minLow5, minLow5 * 1.02, minLow22, minLow22 * 1.02, minLow66, minLow66 * 1.02])
     return expected_prices.max()
 
 
