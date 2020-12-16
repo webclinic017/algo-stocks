@@ -5,9 +5,13 @@ warnings.filterwarnings('ignore')
 import os
 import sys
 import numpy as np
+import platform
 
-ZORRO_STRATEGY_PATH = os.path.abspath('E:\\Zorro\\Strategy\\Magnus\\CounterTrend\\V3.c')
-# ZORRO_STRATEGY_PATH = os.path.abspath('../V3.c')
+if platform.system() == 'Windows':
+    ZORRO_STRATEGY_PATH = os.path.abspath('E:\\Zorro\\Strategy\\Magnus\\CounterTrend\\V3.c')
+if platform.system() != 'Windows':
+    ZORRO_STRATEGY_PATH = os.path.abspath('/home/zuongthao/GIT/zuongthaotn/Zorro/Strategy/Magnus/CounterTrend/V3.c')
+
 METHOD_MODULE_PATH = os.path.abspath('../..')
 sys.path.insert(1, METHOD_MODULE_PATH)
 import method.algofuncs as _af
@@ -17,16 +21,17 @@ path = os.getcwd()
 def getPriceCounterTrendV3a(ticker_data):
     """
         Rule:
-            1. Bien dong gia 3 thang(66 ngay) gan day <40%
-            2. Bien dong gia 1 thang(22 ngay) gan day <20%
-            3. Bien dong gia tuan(5 ngay) gan day < 15%
+            1. Bien dong gia 3 thang(66 ngay) gan day <40% and > 20%
+            2. Bien dong gia 1 thang(22 ngay) gan day <20% and > 10%
+            3. Bien dong gia tuan(5 ngay) gan day < 15% and >7%
             4. Dang giam gia
                 Price Low today is the smaller max5 * 0.95
             5. Giao dich TB 5 ngay gan day > 500k cp/day
             6. Last Rule is 1 of:
-                Price Low today is the min5 or smaller min5 * 2%
-                Or Price Low today is the min22 or smaller min22 * 2%
-                Or Price Low today is the min66 or smaller min66 * 2%
+                Price Low today is the min5 or smaller min5 * 3%
+                Or Price Low today is the min22 or smaller min22 * 3%
+                Or Price Low today is the min66 or smaller min66 * 3%
+            7. Last low price > 5
     :param ticker_data: pandas.core.DataFrame
     """
     last66 = ticker_data.tail(66)
@@ -36,7 +41,7 @@ def getPriceCounterTrendV3a(ticker_data):
     max66ByHigh = ticker_data66[ticker_data66.High == ticker_data66.High.max()]
     maxHigh66 = max66ByHigh.High.values[0]
     diffHL66 = (maxHigh66 - minLow66) / maxHigh66
-    if diffHL66 > 0.41:
+    if diffHL66 > 0.41 or diffHL66 < 0.2:
         return 0
     last22 = ticker_data66.tail(22)
     ticker_data22 = last22.copy()
@@ -45,7 +50,7 @@ def getPriceCounterTrendV3a(ticker_data):
     max22ByHigh = ticker_data22[ticker_data22.High == ticker_data22.High.max()]
     maxHigh22 = max22ByHigh.High.values[0]
     diffHL22 = (maxHigh22 - minLow22) / maxHigh22
-    if diffHL22 > 0.21:
+    if diffHL22 > 0.21 or diffHL22 < 0.1:
         return 0
     last5 = ticker_data22.tail(5)
     ticker_data5 = last5.copy()
@@ -56,11 +61,11 @@ def getPriceCounterTrendV3a(ticker_data):
     max5ByHigh = ticker_data5[ticker_data5.High == ticker_data5.High.max()]
     maxHigh5 = max5ByHigh.High.values[0]
     diffHL5 = (maxHigh5 - minLow5) / maxHigh5
-    if diffHL5 > 0.15:
+    if diffHL5 > 0.15 or diffHL5 < 0.07:
         return 0
-    if ticker_data5.Low.values[-1] > ticker_data5.High.values[-1] * 0.95:
+    if ticker_data5.Low.values[-1] > ticker_data5.High.values[-1] * 0.95 or ticker_data5.Low.values[-1] < 5:
         return 0
-    expected_prices = np.array([minLow5, minLow5 * 1.02, minLow22, minLow22 * 1.02, minLow66, minLow66 * 1.02])
+    expected_prices = np.array([minLow5, minLow5 * 1.03, minLow22, minLow22 * 1.03, minLow66, minLow66 * 1.03])
     return expected_prices.max()
 
 
