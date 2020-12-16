@@ -6,6 +6,10 @@ import sys
 import numpy as np
 import platform
 
+import matplotlib.pyplot as plt
+plt.rcParams['figure.figsize'] = [18, 12]
+plt.rcParams['figure.dpi'] = 120
+
 if platform.system() == 'Windows':
     ZORRO_STRATEGY_PATH = os.path.abspath('E:\\Zorro\\Strategy\\Magnus\\CounterTrend\\V3.c')
 if platform.system() != 'Windows':
@@ -53,7 +57,7 @@ def getPriceCounterTrendV3a(ticker_data):
     diffHL22_p = round((diffHL22 / minLow22), 4)
     if diffHL22_p > 0.21 or diffHL22_p < 0.1:
         return 0
-    last5 = ticker_data22.tail(5)
+    last5 = ticker_data22.tail(4)
     ticker_data5 = last5.copy()
     if ticker_data5.Volume.rolling(window=5).mean().iloc[-1] < 500000:
         return 0

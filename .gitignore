@@ -2,3 +2,6 @@
 .ipynb_checkpoints
 *.csv
 *.html
+/backtest/*
+/method/*
+/vn-stock-data/*
