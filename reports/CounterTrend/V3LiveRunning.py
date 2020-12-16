@@ -1,5 +1,4 @@
 import warnings
-
 warnings.filterwarnings('ignore')
 
 import os
@@ -40,8 +39,9 @@ def getPriceCounterTrendV3a(ticker_data):
     minLow66 = min66ByLow.Low.values[0]
     max66ByHigh = ticker_data66[ticker_data66.High == ticker_data66.High.max()]
     maxHigh66 = max66ByHigh.High.values[0]
-    diffHL66 = (maxHigh66 - minLow66) / maxHigh66
-    if diffHL66 > 0.41 or diffHL66 < 0.2:
+    diffHL66 = (maxHigh66 - minLow66)
+    diffHL66_p = round((diffHL66 / minLow66), 4)
+    if diffHL66_p > 0.41 or diffHL66_p < 0.2:
         return 0
     last22 = ticker_data66.tail(22)
     ticker_data22 = last22.copy()
@@ -49,8 +49,9 @@ def getPriceCounterTrendV3a(ticker_data):
     minLow22 = min22ByLow.Low.values[0]
     max22ByHigh = ticker_data22[ticker_data22.High == ticker_data22.High.max()]
     maxHigh22 = max22ByHigh.High.values[0]
-    diffHL22 = (maxHigh22 - minLow22) / maxHigh22
-    if diffHL22 > 0.21 or diffHL22 < 0.1:
+    diffHL22 = maxHigh22 - minLow22
+    diffHL22_p = round((diffHL22 / minLow22), 4)
+    if diffHL22_p > 0.21 or diffHL22_p < 0.1:
         return 0
     last5 = ticker_data22.tail(5)
     ticker_data5 = last5.copy()
@@ -60,10 +61,11 @@ def getPriceCounterTrendV3a(ticker_data):
     minLow5 = min5ByLow.Low.values[0]
     max5ByHigh = ticker_data5[ticker_data5.High == ticker_data5.High.max()]
     maxHigh5 = max5ByHigh.High.values[0]
-    diffHL5 = (maxHigh5 - minLow5) / maxHigh5
-    if diffHL5 > 0.15 or diffHL5 < 0.07:
+    diffHL5 = maxHigh5 - minLow5
+    diffHL5_p = round((diffHL5 / minLow5), 4)
+    if diffHL5_p > 0.15 or diffHL5_p < 0.07:
         return 0
-    if ticker_data5.Low.values[-1] > ticker_data5.High.values[-1] * 0.95 or ticker_data5.Low.values[-1] < 5:
+    if maxHigh5 < ticker_data5.Low.values[-1] * 1.05 or ticker_data5.Low.values[-1] < 5:
         return 0
     expected_prices = np.array([minLow5, minLow5 * 1.03, minLow22, minLow22 * 1.03, minLow66, minLow66 * 1.03])
     return expected_prices.max()
