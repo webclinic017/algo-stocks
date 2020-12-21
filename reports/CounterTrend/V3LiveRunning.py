@@ -37,6 +37,14 @@ def getPriceCounterTrendV3a(ticker_data):
             7. Last low price > 5
     :param ticker_data: pandas.core.DataFrame
     """
+    last_price = ticker_data.Close.values[-1]
+    data_size = ticker_data.Close.size
+    if data_size < 44 and last_price > 40:
+        return 0
+    if data_size < 66 and last_price > 50:
+        return 0
+    if data_size < 132 and last_price > 60:
+        return 0
     last66 = ticker_data.tail(66)
     ticker_data66 = last66.copy()
     min66ByLow = ticker_data66[ticker_data66.Low == ticker_data66.Low.min()]
@@ -57,7 +65,7 @@ def getPriceCounterTrendV3a(ticker_data):
     diffHL22_p = round((diffHL22 / minLow22), 4)
     if diffHL22_p > 0.21 or diffHL22_p < 0.1:
         return 0
-    last5 = ticker_data22.tail(4)
+    last5 = ticker_data22.tail(5)
     ticker_data5 = last5.copy()
     if ticker_data5.Volume.rolling(window=5).mean().iloc[-1] < 500000:
         return 0
