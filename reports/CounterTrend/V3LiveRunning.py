@@ -91,7 +91,9 @@ result = []
 assets = ''
 thresh_hold = ''
 for ticker_id in hose_ticker:
-    ticker_data = _af.get_pricing_by_path(DATA_PATH + '/' + ticker_id + '.csv', '2020-01-01')
+    # ticker_data = _af.get_pricing_by_path(DATA_PATH + '/' + ticker_id + '.csv', '2020-01-01')
+    # remove lastest item
+    ticker_data = _af.get_pricing_by_path(DATA_PATH + '/' + ticker_id + '.csv', '2020-01-01').head(-1)
     estimated_price = getPriceCounterTrendV3a(ticker_data)
     if estimated_price > 0:
         if not len(result):
@@ -103,6 +105,7 @@ for ticker_id in hose_ticker:
         thresh_hold += '\n\t\tcase "' + str(ticker_id) + '": t = ' + str(estimated_price) + ';\n\t\t\tbreak;'
 
 if len(result):
+    print('Ok!')
     template = open("zorro_template.c", "r")
     template_content = template.read()
     template.close()
