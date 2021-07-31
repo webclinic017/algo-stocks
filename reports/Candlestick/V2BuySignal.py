@@ -13,7 +13,7 @@ import method.algofuncs as _af
 import method.JavCan as jModel
 
 DATA_PATH = os.path.abspath('../../vn-stock-data/VNX/')
-# vn30_ticker = _af.getListVN30()
+vn30_ticker = _af.getListVN30()
 # vnx_file = os.path.abspath('../../vn-stock-data/VNX.csv')
 # hose_ticker = _af.getHOSETickers(vnx_file)
 # for ticker_id in all_ticker:
@@ -24,7 +24,7 @@ for index, ticker_id in all_ticker.ticker.iteritems():
     if ticker_id == 'ticker' or ticker_id == '':
         continue
     ticker_data = _af.get_pricing_by_path(DATA_PATH + '/' + ticker_id + '.csv', '2021-07-01')
-    if ticker_data.Volume[-1] < 500000:
+    if ticker_data.Volume[-1] < 800000 and ticker_data.Volume[-2] < 800000:
         continue
     _1hit_data = ticker_data.tail(10)
     new_data = jModel.convertToJapanCandle(_1hit_data)
@@ -35,9 +35,3 @@ for index, ticker_id in all_ticker.ticker.iteritems():
 
     if hasBuySignal is not False:
         print(ticker_id)
-
-    # hasSellSignal = jModel.hasSellSignal(new_data.Open, new_data.Close, new_data.High, new_data.Low,
-    #                                      new_data.Body, new_data.Height, new_data.UpShadow,
-    #                                      new_data.LowerShadow, new_data.Date)
-    # if hasSellSignal is not False:
-    #     print(ticker_id)

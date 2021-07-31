@@ -4,15 +4,16 @@ warnings.filterwarnings('ignore')
 
 import os
 import sys
+import numpy as np
 
 METHOD_MODULE_PATH = os.path.abspath('../..')
 sys.path.insert(1, METHOD_MODULE_PATH)
 import method.algofuncs as _af
 import method.JavCan as jModel
 
-ticker_id = 'GMD'
+ticker_id = 'VRE'
 DATA_PATH = os.path.abspath('../vn-stock-data/VNX/')
-ticker_data = _af.get_pricing_by_path(DATA_PATH + '/' + ticker_id + '.csv', '2021-01-01')
+ticker_data = _af.get_pricing_by_path(DATA_PATH + '/' + ticker_id + '.csv', '2019-01-01')
 
 
 
@@ -26,10 +27,12 @@ ticker_data = _af.get_pricing_by_path(DATA_PATH + '/' + ticker_id + '.csv', '202
 d2 = jModel.convertToJapanCandle(ticker_data)
 for index, row in d2.iterrows():
     # print(row['Open'])
-    isHammer = jModel.isHammer(row['Open'], row['Close'], row['Body'], row['Height'], row['UpShadow'], row['LowerShadow'])
-    if isHammer is True:
-        print(index)
-
+    # isHammer = jModel.isHammer(row['Open'], row['Close'], row['Body'], row['Height'], row['UpShadow'], row['LowerShadow'])
+    # if isHammer is True:
+    #     print(index)
+    if np.datetime64(row['Date']) == np.datetime64('2019-01-04T00:00:00.000000000'):
+        isHammer = jModel.isDoji(row['Body'], row['Height'])
+        print(isHammer)
 
 
 # last = 0

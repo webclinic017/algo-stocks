@@ -78,7 +78,7 @@ class System(Strategy):
             self.position.close()
 
 
-ticker_id = 'VCB'
+ticker_id = 'VRE'
 DATA_PATH = os.path.abspath('../../vn-stock-data/VNX/')
 ticker = _af.get_pricing_by_path(DATA_PATH + '/' + ticker_id + '.csv', '2013-01-01', '2020-10-05')
 
@@ -89,4 +89,4 @@ optimized_stats = backtest.optimize(d_rsi=range(10, 35, 5),
                   w_rsi=range(10, 35, 5),
                   level=range(30, 80, 10))
 print(optimized_stats)
-# backtest.plot()
+backtest.plot()

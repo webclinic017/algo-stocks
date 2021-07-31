@@ -19,7 +19,7 @@ path = os.getcwd()
 LOOK_BACK = 6
 
 
-class Test(Strategy):
+class HammerModel(Strategy):
     def init(self):
         self.orderPending = False
 
@@ -45,7 +45,7 @@ DATA_PATH = os.path.abspath('../../vn-stock-data/VNX/')
 ticker_id = 'VRE'
 ticker_data = _af.get_pricing_by_path(DATA_PATH + '/' + ticker_id + '.csv', '2018-01-01')
 new_data = jModel.convertToJapanCandle(ticker_data)
-bt = Backtest(ticker_data, Test, commission=.005, exclusive_orders=False)
+bt = Backtest(ticker_data, HammerModel, commission=.005, exclusive_orders=False)
 stats = bt.run()
 print(stats)
 # print(stats['_trades'])

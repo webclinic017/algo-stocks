@@ -19,7 +19,7 @@ path = os.getcwd()
 LOOK_BACK = 6
 
 
-class StarsPattern(Strategy):
+class Harami(Strategy):
     orderPending: bool
 
     def init(self):
@@ -27,10 +27,10 @@ class StarsPattern(Strategy):
 
     def next(self):
         if len(self.data.Volume) > LOOK_BACK:
-            hasBuySignal = jModel.isMorningStarsPattern(self.data.Open, self.data.Close, self.data.High, self.data.Low,
+            hasBuySignal = jModel.isBullishHarami(self.data.Open, self.data.Close, self.data.High, self.data.Low,
                                             self.data.Body, self.data.Height, self.data.UpShadow,
                                             self.data.LowerShadow)
-            hasSellSignal = jModel.isEveningStarsPattern(self.data.Open, self.data.Close, self.data.High, self.data.Low,
+            hasSellSignal = jModel.isBearishHarami(self.data.Open, self.data.Close, self.data.High, self.data.Low,
                                                  self.data.Body, self.data.Height, self.data.UpShadow,
                                                  self.data.LowerShadow)
 
@@ -56,7 +56,7 @@ DATA_PATH = os.path.abspath('../../vn-stock-data/VNX/')
 ticker_id = 'VRE'
 ticker_data = _af.get_pricing_by_path(DATA_PATH + '/' + ticker_id + '.csv', '2018-01-01')
 new_data = jModel.convertToJapanCandle(ticker_data)
-bt = Backtest(ticker_data, StarsPattern, commission=.005, exclusive_orders=False)
+bt = Backtest(ticker_data, Harami, commission=.005, exclusive_orders=False)
 stats = bt.run()
 print(stats)
 # print(stats['_trades'])
