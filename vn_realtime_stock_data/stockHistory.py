@@ -15,7 +15,9 @@ def getStockHistoryData(ticker):
     startTime = datetime.strptime(three_months.strftime("%m/%d/%Y") + ', 00:00:0', "%m/%d/%Y, %H:%M:%S").timestamp()
     import requests
 
-    x = requests.get('https://iboard.ssi.com.vn/dchart/api/history?resolution=D&symbol='+str(ticker)+'&from='+str(startTime)+'&to='+str(endTime))
+    url = 'https://iboard.ssi.com.vn/dchart/api/history?resolution=D&symbol='+str(ticker)+'&from='+str(startTime)+'&to='+str(endTime)
+    # print(url)
+    x = requests.get(url)
     response = x.json()
 
     import numpy as np

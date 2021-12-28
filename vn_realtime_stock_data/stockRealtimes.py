@@ -1,4 +1,4 @@
-def getTodayData():
+def getTodayData(exchange = "hose"):
     from python_graphql_client import GraphqlClient
     # Instantiate the client with an endpoint.
     client = GraphqlClient(endpoint="https://gateway-iboard.ssi.com.vn/graphql")
@@ -19,7 +19,7 @@ def getTodayData():
           }
         }
     """
-    variables = {"exchange": "hose"}
+    variables = {"exchange": exchange}
 
     # Asynchronous request
     import asyncio
