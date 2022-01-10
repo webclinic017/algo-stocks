@@ -2,6 +2,19 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
+import os
+import sys
+
+import method.algofuncs as _af
+import method.JavCan as jModel
+
+BACKTESTING_MODULE_PATH = os.path.abspath('backtest')
+sys.path.append(BACKTESTING_MODULE_PATH)
+from backtesting import Backtest, Strategy
+
+
+path = os.getcwd()
+
 import pandas as pd
 import numpy as np
 
@@ -9,22 +22,6 @@ import numpy as np
 def SMA(array, n):
     """Simple moving average"""
     return pd.Series(array).rolling(n).mean()
-
-
-import os
-import sys
-
-METHOD_MODULE_PATH = os.path.abspath('../..')
-sys.path.insert(1, METHOD_MODULE_PATH)
-import method.algofuncs as _af
-import method.JavCan as jModel
-
-BACKTESTING_MODULE_PATH = os.path.abspath('../../backtest')
-sys.path.insert(1, BACKTESTING_MODULE_PATH)
-from backtesting.backtesting import Backtest, Strategy
-from backtesting.lib import crossover
-
-path = os.getcwd()
 
 LOOK_BACK = 6
 
@@ -65,7 +62,7 @@ def getMoment(_open, _close, _high, _low, _type):
 
 
 
-DATA_PATH = os.path.abspath('../../vn-stock-data/VNX/')
+DATA_PATH = os.path.abspath('vn-stock-data/VNX/')
 ticker_id = 'VCB'
 ticker_data = _af.get_pricing_by_path(DATA_PATH + '/' + ticker_id + '.csv', '2018-05-01', '2018-05-30')
 ticker_data['Moment'] = ticker_data.apply(

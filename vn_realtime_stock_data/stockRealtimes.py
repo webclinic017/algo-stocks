@@ -8,6 +8,7 @@ def getTodayData(exchange = "hose"):
         query stockRealtimes($exchange: String) {
           stockRealtimes(exchange: $exchange) {
             stockSymbol
+            refPrice
             openPrice
             matchedPrice
             priceChange

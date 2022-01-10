@@ -22,6 +22,15 @@ def getMinVolumeByTime():
     hm = int(ch) + int(cm)/60
     return hm * 100000
 
+def sendTelegramMessage(msg):
+    import requests
+    telegram_api_url = f"https://api.telegram.org/bot5030570649:AAFbGmcT4T72M_uhiBjy7pEgPi_Lk0j694Y/sendMessage?chat_id=@magnus_vn_algo&text={msg}"
+    requests.get(telegram_api_url)
+    # if tel_resp.status_code == 200:
+    #     print("Notification has been sent on Telegram")
+    # else:
+    #     print("Could not send Message")
+
 
 data = stockRealtime.getTodayData('hose')
 for ticker_data in data:
@@ -45,13 +54,14 @@ for ticker_data in data:
     condition2 = True if total_height > 0.05 * close else False
     # today has a long tail
     if condition1 is True:
-        print('-'+ticker)
+        # print(ticker)
         if condition2 is True:
-            print('--'+ticker)
+            # print(ticker)
             history_ticker_data = stockHistory.getStockHistoryData(ticker)  # not include today data
             # # print(history_ticker_data)
             htd = jModel.convertToJapanCandle(history_ticker_data)
             _close = htd.Close.to_numpy()
             isDownTrend = jModel.isDownTrendV2ByRSI(_close)
             if isDownTrend is True:
-                print('---'+ticker)
+                # print(ticker)
+                sendTelegramMessage(ticker)

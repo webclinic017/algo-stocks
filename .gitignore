@@ -5,3 +5,4 @@
 /backtest/*
 /method/*
 /vn-stock-data/*
+/vn_realtime_stock_data/__pycache__
