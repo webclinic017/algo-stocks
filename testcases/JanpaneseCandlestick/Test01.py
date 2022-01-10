@@ -3,13 +3,10 @@ warnings.filterwarnings('ignore')
 
 import os
 import sys
-import numpy as np
-import platform
-METHOD_MODULE_PATH = os.path.abspath('../..')
-sys.path.insert(1, METHOD_MODULE_PATH)
+
 import method.algofuncs as _af
 
-BACKTESTING_MODULE_PATH = os.path.abspath('../../backtest')
+BACKTESTING_MODULE_PATH = os.path.abspath('backtest')
 sys.path.insert(1, BACKTESTING_MODULE_PATH)
 from backtesting.backtesting import Backtest, Strategy
 
@@ -32,7 +29,7 @@ class Test(Strategy):
                 if(lows[-1] > 2 * bodies[-1]):
                     self.position.close()
 
-DATA_PATH = os.path.abspath('../../vn-stock-data/VNX/')
+DATA_PATH = os.path.abspath('vn-stock-data/VNX/')
 ticker_id = 'BVH'
 ticker_data = _af.get_pricing_by_path(DATA_PATH + '/' + ticker_id+'.csv', '2018-01-01', '2021-10-05')
 ticker_data['Height'] = ticker_data.apply(lambda x: x['High'] - x['Low'], axis = 1)

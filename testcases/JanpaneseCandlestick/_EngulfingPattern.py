@@ -4,12 +4,10 @@ warnings.filterwarnings('ignore')
 import os
 import sys
 
-METHOD_MODULE_PATH = os.path.abspath('../..')
-sys.path.insert(1, METHOD_MODULE_PATH)
 import method.algofuncs as _af
 import method.JavCan as jModel
 
-BACKTESTING_MODULE_PATH = os.path.abspath('../../backtest')
+BACKTESTING_MODULE_PATH = os.path.abspath('backtest')
 sys.path.insert(1, BACKTESTING_MODULE_PATH)
 from backtesting.backtesting import Backtest, Strategy
 
@@ -42,7 +40,7 @@ class Engulfing(Strategy):
                 self.orderPending = False
 
 
-DATA_PATH = os.path.abspath('../../vn-stock-data/VNX/')
+DATA_PATH = os.path.abspath('vn-stock-data/VNX/')
 ticker_id = 'VRE'
 ticker_data = _af.get_pricing_by_path(DATA_PATH + '/' + ticker_id + '.csv', '2018-01-01')
 new_data = jModel.convertToJapanCandle(ticker_data)

@@ -1,37 +1,76 @@
 import warnings
-
 warnings.filterwarnings('ignore')
 
 import os
 import sys
-import pandas as pd
-import numpy as np
+import time
 
 METHOD_MODULE_PATH = os.path.abspath('../..')
 sys.path.insert(1, METHOD_MODULE_PATH)
-import method.algofuncs as _af
 import method.JavCan as jModel
+import vn_realtime_stock_data.stockRealtimes as stockRealtime
+import vn_realtime_stock_data.stockHistory as stockHistory
 
-DATA_PATH = os.path.abspath('../../vn-stock-data/VNX/')
-vn30_ticker = _af.getListVN30()
-# vnx_file = os.path.abspath('../../vn-stock-data/VNX.csv')
-# hose_ticker = _af.getHOSETickers(vnx_file)
-# for ticker_id in all_ticker:
+_upf = lambda c, o, h: ((h - c) if (c > o) else (h - o))
+_botf = lambda c, o, l: ((o - l) if (c > o) else (c - l))
 
-vnx_file = os.path.abspath('../../vn-stock-data/Tickers.csv')
-all_ticker = pd.read_csv(vnx_file, usecols=["ticker"])
-for index, ticker_id in all_ticker.ticker.iteritems():
-    if ticker_id == 'ticker' or ticker_id == '':
+def getMinVolumeByTime():
+    from datetime import datetime
+    ch = datetime.now().strftime("%H")
+    cm = datetime.now().strftime("%M")
+    hm = int(ch) + int(cm)/60
+    return hm * 100000
+
+
+data = stockRealtime.getTodayData('hose')
+for ticker_data in data:
+    ticker = ticker_data['stockSymbol']
+    if len(ticker) != 3:
         continue
-    ticker_data = _af.get_pricing_by_path(DATA_PATH + '/' + ticker_id + '.csv', '2021-07-01')
-    if ticker_data.Volume[-1] < 800000 and ticker_data.Volume[-2] < 800000:
+    _volume = ticker_data['nmTotalTradedQty']
+    _minVol = getMinVolumeByTime()
+    if type(_volume) is not int or _volume < _minVol:
         continue
-    _1hit_data = ticker_data.tail(10)
-    new_data = jModel.convertToJapanCandle(_1hit_data)
+    open = ticker_data['openPrice']
+    close = ticker_data['matchedPrice']
+    highest = ticker_data['highest']
+    lowest = ticker_data['lowest']
+    total_height = highest - lowest
+    body = abs(close - open)
+    head = _upf(close, open, highest)
+    tail = _botf(close, open, lowest)
 
-    hasBuySignal = jModel.hasBuySignal(new_data.Open, new_data.Close, new_data.High, new_data.Low,
-                                       new_data.Body, new_data.Height, new_data.UpShadow,
-                                       new_data.LowerShadow, new_data.Date)
-
-    if hasBuySignal is not False:
-        print(ticker_id)
+    if open == close:
+        """ Doji """
+        # history_ticker_data = stockHistory.getStockHistoryData(ticker)  # not include today data
+        # htd = jModel.convertToJapanCandle(history_ticker_data)
+        # _close = htd.Close.to_numpy()
+        # isDownTrend = jModel.isDownTrendV2ByRSI(_close)
+        # if isDownTrend is True:
+        #     print('---' + ticker)
+        continue
+    elif open > close:
+        """ Black candlestick """
+        continue
+    else:
+        """ White candlestick """
+        # condition1 = True if tail > 0.65 * total_height else False
+        # condition2 = True if total_height > 0.05 * close else False
+        # # today has a long tail
+        # if condition1 is True:
+        #     print('-'+ticker)
+        #     if condition2 is True:
+        #         print('--'+ticker)
+        #         history_ticker_data = stockHistory.getStockHistoryData(ticker)  # not include today data
+        #         # # print(history_ticker_data)
+        #         htd = jModel.convertToJapanCandle(history_ticker_data)
+        #         _close = htd.Close.to_numpy()
+        #         isDownTrend = jModel.isDownTrendV2ByRSI(_close)
+        #         if isDownTrend is True:
+        #             print('---'+ticker)
+        isHammer = jModel.isHammer(body, total_height, head, tail)
+        if isHammer is True:
+            print('--'+ticker)
+        isSpinningTopCandlestick = jModel.isSpinningTopCandlestick(body, total_height, head, tail)
+        if isSpinningTopCandlestick is True:
+            print('---'+ticker)
