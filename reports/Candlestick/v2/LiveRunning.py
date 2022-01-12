@@ -27,6 +27,7 @@ def sendTelegramMessage(msg):
 
 data = stockRealtime.getTodayData('hose')
 selectedTickers = []
+message = 'Những cổ phiếu đc xem xét: \n'
 for ticker_data in data:
     ticker = ticker_data['stockSymbol']
     if len(ticker) != 3:
@@ -47,6 +48,7 @@ for ticker_data in data:
     body = abs(close - open)
     head = _upf(close, open, highest)
     tail = _botf(close, open, lowest)
+    price = close/1000
 
     if open == close:
         """ Today is a doji candlestick """
@@ -59,6 +61,7 @@ for ticker_data in data:
         isDownTrend = jModel.isDownTrendV2ByRSI(_close)
         if isDownTrend is True:
             selectedTickers.append(ticker)
+            message += ticker + "(" + str(price)+")\n"
     elif open < close:
         """ Today is a white candlestick """
         go_pass = False
@@ -91,14 +94,12 @@ for ticker_data in data:
             isDownTrend = jModel.isDownTrendV2ByRSI(_close)
             if isDownTrend is True:
                 selectedTickers.append(ticker)
+                message += ticker + "(" + str(price) + ")\n"
         # ----------------------------------------------------------------------------------------------
     else:
         """  Today is a black candlestick """
         continue
 
 if selectedTickers:
-    message = 'Những cổ phiếu đc xem xét: \n'
-    for ticker in selectedTickers:
-        message += ticker + "\n"
     # print(message)
     sendTelegramMessage(message)
