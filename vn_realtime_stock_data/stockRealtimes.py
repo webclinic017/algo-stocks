@@ -9,6 +9,8 @@ def getTodayData(exchange = "hose"):
           stockRealtimes(exchange: $exchange) {
             stockSymbol
             refPrice
+            ceiling
+            floor
             openPrice
             matchedPrice
             priceChange
