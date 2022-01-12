@@ -33,6 +33,8 @@ for ticker_data in data:
         continue
     if ticker_data['highest'] == ticker_data['ceiling']:
         continue
+    if ticker_data['matchedPrice'] == ticker_data['floor']:
+        continue
     _volume = ticker_data['nmTotalTradedQty']
     _minVol = getMinVolumeByTime()
     if type(_volume) is not int or _volume < _minVol:
