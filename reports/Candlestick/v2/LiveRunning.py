@@ -1,8 +1,13 @@
 import warnings
-
 warnings.filterwarnings('ignore')
 
 from datetime import datetime
+
+import os
+import sys
+
+METHOD_MODULE_PATH = os.path.abspath('../')
+sys.path.insert(1, METHOD_MODULE_PATH)
 
 import method.JavCan as jModel
 import vn_realtime_stock_data.stockRealtimes as stockRealtime
