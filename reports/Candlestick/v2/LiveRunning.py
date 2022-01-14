@@ -6,7 +6,7 @@ from datetime import datetime
 import os
 import sys
 
-METHOD_MODULE_PATH = os.path.abspath('../')
+METHOD_MODULE_PATH = os.path.abspath('.')
 sys.path.insert(1, METHOD_MODULE_PATH)
 
 import method.JavCan as jModel
